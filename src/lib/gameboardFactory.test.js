@@ -1,14 +1,6 @@
 const gameboardFactory = require('./gameboardFactory.js');
 
-/* eslint-disable */
-// // Create Gameboard factory.
-// Note that we have not yet created any User Interface. We should know our code is coming together by running the tests. You shouldn’t be relying on console.logs or DOM methods to make sure your code is doing what you expect it to.
-// Gameboards should be able to place ships at specific coordinates by calling the ship factory function.
-// Gameboards should have a receiveAttack function that takes a pair of coordinates, determines whether or not the attack hit a ship and then sends the ‘hit’ function to the correct ship, or records the coordinates of the missed shot.
-// Gameboards should keep track of missed attacks so they can display them properly.
-// Gameboards should be able to report whether or not all of their ships have been sunk.
-/* eslint-enable */
-
+// General initialization tests
 test('gameboardFactory returns an object', () => {
   expect(typeof gameboardFactory()).toBe('object');
 });
@@ -29,6 +21,7 @@ test('gameboardFactory returns an object with a missedAttacks property', () => {
   expect(gameboardFactory()).toHaveProperty('missedAttacks');
 });
 
+// functionality tests
 test('gameboardFactory returns an object with a placeShip method that places a ship at the given coordinates', () => {
   const gameboard = gameboardFactory();
   gameboard.placeShip(5, [0, 0], 'horizontal');
@@ -74,4 +67,32 @@ test('gameboardFactory returns an object with a allShipsSunk method that returns
   gameboard.receiveAttack([3, 0]);
   gameboard.receiveAttack([4, 0]);
   expect(gameboard.allShipsSunk()).toBe(true);
+});
+
+// Constraints tests
+test('gameboardFactory returns an object with a placeShip method that does not allow overlapping ships', () => {
+  const gameboard = gameboardFactory();
+  gameboard.placeShip(5, [0, 0], 'horizontal');
+  expect(() => gameboard.placeShip(5, [0, 0], 'horizontal')).toThrow();
+});
+
+test('gameboardFactory returns an object with a placeShip method that does not allow ships to be placed outside the board', () => {
+  const gameboard = gameboardFactory();
+  expect(() => gameboard.placeShip(5, [6, 0], 'horizontal')).toThrow();
+});
+
+test('gameboardFactory returns an object with a placeShip method that does not allow ships to be placed outside the board', () => {
+  const gameboard = gameboardFactory();
+  expect(() => gameboard.placeShip(5, [0, 6], 'vertical')).toThrow();
+});
+
+// Check for length of ships
+test('gameboardFactory returns error if ship length is less than 1', () => {
+  const gameboard = gameboardFactory();
+  expect(() => gameboard.placeShip(0, [0, 0], 'horizontal')).toThrow();
+});
+
+test('gameboardFactory returns error if ship length is greater than 5', () => {
+  const gameboard = gameboardFactory();
+  expect(() => gameboard.placeShip(6, [0, 0], 'horizontal')).toThrow();
 });

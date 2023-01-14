@@ -34,8 +34,33 @@ function gameboardFactory() {
     ships: [],
     missedAttacks: [],
     placeShip(length, coordinates, orientation) {
+      // Check if length is valid (between 1 and 5)
+      if (length < 1 || length > 5) {
+        throw new Error('Ship length must be between 1 and 5');
+      }
+
+      // create ship
       const ship = shipFactory(length);
       ship.coordinates = getShipCoordinates(coordinates, length, orientation);
+
+      // check if ship overlaps with another ship
+      const shipOverlaps = this.ships.some((ship) => ship.coordinates
+        .some((shipCoordinate) => ship.coordinates
+          .some((otherShipCoordinate) => shipCoordinate[0] === otherShipCoordinate[0]
+            && shipCoordinate[1] === otherShipCoordinate[1])));
+      if (shipOverlaps) {
+        throw new Error('Ships cannot overlap');
+      }
+
+      // check if ship is off the board
+      const shipOffBoard = ship.coordinates.some((shipCoordinate) => {
+        const [x, y] = shipCoordinate;
+        return x < 0 || x > 9 || y < 0 || y > 9;
+      });
+      if (shipOffBoard) {
+        throw new Error('Ships cannot be placed off the board');
+      }
+
       this.ships.push(ship);
     },
     receiveAttack(coordinates) {
