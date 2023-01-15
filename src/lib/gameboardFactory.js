@@ -39,18 +39,44 @@ function gameboardFactory() {
         throw new Error('Ship length must be between 1 and 5');
       }
 
-      // create ship
-      const ship = shipFactory(length);
-      ship.coordinates = getShipCoordinates(coordinates, length, orientation);
+      // Check if orientation is valid (horizontal or vertical)
+      if (orientation !== 'horizontal' && orientation !== 'vertical') {
+        throw new Error('Ship orientation must be horizontal or vertical');
+      }
 
-      // check if ship overlaps with another ship
-      const shipOverlaps = this.ships.some((ship) => ship.coordinates
-        .some((shipCoordinate) => ship.coordinates
-          .some((otherShipCoordinate) => shipCoordinate[0] === otherShipCoordinate[0]
-            && shipCoordinate[1] === otherShipCoordinate[1])));
+      // Check if coordinates are valid (array of two numbers between 0 and 9)
+      if (!Array.isArray(coordinates)) {
+        throw new Error('Ship coordinates must be an array');
+      }
+      if (coordinates.length !== 2) {
+        throw new Error('Ship coordinates must be an array of two numbers');
+      }
+      coordinates.forEach((coordinate) => {
+        if (typeof coordinate !== 'number') {
+          throw new Error('Ship coordinates must be an array of two numbers');
+        }
+        if (coordinate < 0 || coordinate > 9) {
+          throw new Error('Ship coordinates must be between 0 and 9');
+        }
+      });
+
+      // Check if ship overlaps with another ship
+      const shipCoordinates = getShipCoordinates(coordinates, length, orientation);
+      const shipOverlaps = shipCoordinates.some((shipCoordinate) => {
+        const [y, x] = shipCoordinate;
+        return this.ships.some((ship) => ship.coordinates.some((shipCoordinate) => {
+          const [shipX, shipY] = shipCoordinate;
+          return shipX === x && shipY === y;
+        }));
+      });
+
       if (shipOverlaps) {
         throw new Error('Ships cannot overlap');
       }
+
+      // create ship
+      const ship = shipFactory(length);
+      ship.coordinates = getShipCoordinates(coordinates, length, orientation);
 
       // check if ship is off the board
       const shipOffBoard = ship.coordinates.some((shipCoordinate) => {
