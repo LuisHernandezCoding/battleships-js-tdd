@@ -89,20 +89,20 @@ test('gameboardFactory returns error if second ship is placed on top of first sh
   const gameboard = gameboardFactory();
   gameboard.placeShip(5, [0, 0], 'horizontal');
   expect(() => gameboard.placeShip(5, [0, 0], 'horizontal')).toThrow();
-  expect(() => gameboard.placeShip(5, [0, 1], 'horizontal')).toThrow();
-  expect(() => gameboard.placeShip(5, [0, 2], 'horizontal')).toThrow();
-  expect(() => gameboard.placeShip(5, [0, 3], 'horizontal')).toThrow();
-  expect(() => gameboard.placeShip(5, [0, 4], 'horizontal')).toThrow();
+  expect(() => gameboard.placeShip(5, [1, 0], 'horizontal')).toThrow();
+  expect(() => gameboard.placeShip(5, [2, 0], 'horizontal')).toThrow();
+  expect(() => gameboard.placeShip(5, [3, 0], 'horizontal')).toThrow();
+  expect(() => gameboard.placeShip(5, [4, 0], 'horizontal')).toThrow();
 });
 
 test('gameboardFactory returns error if second ship is placed on top of first ship (vertical)', () => {
   const gameboard = gameboardFactory();
   gameboard.placeShip(5, [0, 0], 'vertical');
   expect(() => gameboard.placeShip(5, [0, 0], 'vertical')).toThrow();
-  expect(() => gameboard.placeShip(5, [1, 0], 'vertical')).toThrow();
-  expect(() => gameboard.placeShip(5, [2, 0], 'vertical')).toThrow();
-  expect(() => gameboard.placeShip(5, [3, 0], 'vertical')).toThrow();
-  expect(() => gameboard.placeShip(5, [4, 0], 'vertical')).toThrow();
+  expect(() => gameboard.placeShip(5, [0, 1], 'vertical')).toThrow();
+  expect(() => gameboard.placeShip(5, [0, 2], 'vertical')).toThrow();
+  expect(() => gameboard.placeShip(5, [0, 3], 'vertical')).toThrow();
+  expect(() => gameboard.placeShip(5, [0, 4], 'vertical')).toThrow();
 });
 
 // Check for coordinates (out of bounds)

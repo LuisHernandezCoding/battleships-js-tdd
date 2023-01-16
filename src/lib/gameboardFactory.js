@@ -28,51 +28,58 @@ function getHitShip(coordinates, ships) {
   return shipHit;
 }
 
+function validateShipLength(length) {
+  if (length < 1 || length > 5) {
+    throw new Error('Ship length must be between 1 and 5');
+  }
+}
+
+function validateOrientation(orientation) {
+  if (orientation !== 'horizontal' && orientation !== 'vertical') {
+    throw new Error('Ship orientation must be horizontal or vertical');
+  }
+}
+
+function validateCoordinates(coordinates) {
+  if (!Array.isArray(coordinates)) {
+    throw new Error('Ship coordinates must be an array');
+  }
+  if (coordinates.length !== 2) {
+    throw new Error('Ship coordinates must be an array of two numbers');
+  }
+  coordinates.forEach((coordinate) => {
+    if (typeof coordinate !== 'number') {
+      throw new Error('Ship coordinates must be an array of two numbers');
+    }
+    if (coordinate < 0 || coordinate > 9) {
+      throw new Error('Ship coordinates must be between 0 and 9');
+    }
+  });
+}
+
+function validateOverlap(coordinates, length, orientation, ships) {
+  const shipCoordinates = getShipCoordinates(coordinates, length, orientation);
+  ships.forEach((ship) => {
+    shipCoordinates.forEach((shipCoordinate) => {
+      ship.coordinates.forEach((shipCoordinate2) => {
+        if (shipCoordinate[0] === shipCoordinate2[0] && shipCoordinate[1] === shipCoordinate2[1]) {
+          throw new Error('Ships cannot overlap');
+        }
+      });
+    });
+  });
+}
+
 // gameboard factory function
 function gameboardFactory() {
   const gameboard = {
     ships: [],
     missedAttacks: [],
     placeShip(length, coordinates, orientation) {
-      // Check if length is valid (between 1 and 5)
-      if (length < 1 || length > 5) {
-        throw new Error('Ship length must be between 1 and 5');
-      }
-
-      // Check if orientation is valid (horizontal or vertical)
-      if (orientation !== 'horizontal' && orientation !== 'vertical') {
-        throw new Error('Ship orientation must be horizontal or vertical');
-      }
-
-      // Check if coordinates are valid (array of two numbers between 0 and 9)
-      if (!Array.isArray(coordinates)) {
-        throw new Error('Ship coordinates must be an array');
-      }
-      if (coordinates.length !== 2) {
-        throw new Error('Ship coordinates must be an array of two numbers');
-      }
-      coordinates.forEach((coordinate) => {
-        if (typeof coordinate !== 'number') {
-          throw new Error('Ship coordinates must be an array of two numbers');
-        }
-        if (coordinate < 0 || coordinate > 9) {
-          throw new Error('Ship coordinates must be between 0 and 9');
-        }
-      });
-
-      // Check if ship overlaps with another ship
-      const shipCoordinates = getShipCoordinates(coordinates, length, orientation);
-      const shipOverlaps = shipCoordinates.some((shipCoordinate) => {
-        const [y, x] = shipCoordinate;
-        return this.ships.some((ship) => ship.coordinates.some((shipCoordinate) => {
-          const [shipX, shipY] = shipCoordinate;
-          return shipX === x && shipY === y;
-        }));
-      });
-
-      if (shipOverlaps) {
-        throw new Error('Ships cannot overlap');
-      }
+      validateShipLength(length);
+      validateOrientation(orientation);
+      validateCoordinates(coordinates);
+      validateOverlap(coordinates, length, orientation, this.ships);
 
       // create ship
       const ship = shipFactory(length);
