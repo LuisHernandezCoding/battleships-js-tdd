@@ -1,4 +1,4 @@
-const gameboardFactory = require('./gameboardFactory.js');
+import { gameboardFactory } from './gameboardFactory.js';
 
 export default function Player() {
   // Create Gameboard.

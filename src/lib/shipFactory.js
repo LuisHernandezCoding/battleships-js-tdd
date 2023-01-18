@@ -1,4 +1,4 @@
-function shipFactory(length) {
+export default function shipFactory(length) {
   const ship = {
     length,
     hits: [],
@@ -11,5 +11,3 @@ function shipFactory(length) {
   };
   return ship;
 }
-
-module.exports = shipFactory;

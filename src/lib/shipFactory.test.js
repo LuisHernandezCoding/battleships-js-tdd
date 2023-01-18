@@ -1,4 +1,4 @@
-const shipFactory = require('./shipFactory.js');
+import shipFactory from './shipFactory.js';
 
 test('shipFactory returns an object', () => {
   expect(typeof shipFactory()).toBe('object');

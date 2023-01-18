@@ -1,4 +1,4 @@
-const game = require('./game.js');
+import game from './game.js';
 
 // Test if game returns an object
 test('game returns an object', () => {
