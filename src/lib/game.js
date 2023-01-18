@@ -1,7 +1,7 @@
-const gameboardFactory = require('./gameboardFactory.js');
-const shipFactory = require('./shipFactory.js');
+import { gameboardFactory } from './gameboardFactory.js';
+import shipFactory from './shipFactory.js';
 
-module.exports = () => {
+export default () => {
   const game = {
     // properties
     actualPlayer: 1,
@@ -14,12 +14,12 @@ module.exports = () => {
     },
     randomPlaceShips(board) {
       const ships = [
-        shipFactory(5),
-        shipFactory(4),
-        shipFactory(3),
-        shipFactory(3),
-        shipFactory(2),
-        shipFactory(2),
+        { name: 'Carrier', value: shipFactory(5) },
+        { name: 'Battleship', value: shipFactory(4) },
+        { name: 'Cruiser', value: shipFactory(3) },
+        { name: 'Submarine', value: shipFactory(3) },
+        { name: 'Destroyer', value: shipFactory(2) },
+        { name: 'Patroller', value: shipFactory(2) },
       ];
       ships.forEach((ship) => {
         let coordinates = [];
@@ -32,7 +32,7 @@ module.exports = () => {
           ];
           orientation = Math.random() < 0.5 ? 'horizontal' : 'vertical';
           try {
-            board.placeShip(ship.length, coordinates, orientation);
+            board.placeShip(ship.name, ship.value.length, coordinates, orientation);
             validShip = true;
           } catch (error) {
             validShip = false;
@@ -47,14 +47,14 @@ module.exports = () => {
         throw new Error('You need to place all the ships');
       }
     },
-    playerAttack(x, y) {
+    checkValidAttack(x, y) {
       const coords = [x, y];
       // check if the game is started
       if (!this.gameStarted) {
         throw new Error('You need to start the game');
       }
       // check if the coordinates are valid
-      if (coords[0] < 0 || coords[0] > 9 || coords[1] < 0 || coords[1] > 9) {
+      if (x < 0 || x > 9 || y < 0 || y > 9) {
         throw new Error('Coordinates are not valid');
       }
 
@@ -68,11 +68,26 @@ module.exports = () => {
       if (missed || hitted) {
         throw new Error('You already attacked this coordinates');
       }
-
-      this.computerBoard.receiveAttack(coords);
-      this.changePlayer();
+      return true;
     },
-    computerAttack() {
+    playerAttack(x, y) {
+      if (this.checkValidAttack(x, y)) {
+        this.computerBoard.receiveAttack([x, y]);
+        // Check if the attack hit a ship
+        if (this.computerBoard.ships.some((ship) => ship.hits.some((hit) => hit[0] === x
+          && hit[1] === y))) {
+          return 'hit';
+        }
+        this.changePlayer();
+        const cpuAttack = this.computerAttack();
+        this.changePlayer();
+        if (cpuAttack === 'miss') {
+          return 'doubleMiss';
+        }
+      }
+      return 'missAndHit';
+    },
+    computerAttack(hits = 0) {
       // check if the game is started
       if (!this.gameStarted) {
         throw new Error('You need to start the game');
@@ -88,8 +103,18 @@ module.exports = () => {
         this.computerAttack();
       } else {
         this.playerBoard.receiveAttack(coordinates);
+        // Check if the attack hit a ship
+        if (this.playerBoard.ships.some((ship) => ship.hits.some((hit) => hit[0] === coordinates[0]
+          && hit[1] === coordinates[1]))) {
+          this.computerAttack(hits + 1);
+          return 'hit';
+        }
         this.changePlayer();
       }
+      if (hits === 0) {
+        return 'miss';
+      }
+      return hits;
     },
     gameEnd() {
       // check if the game is started

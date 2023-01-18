@@ -25,7 +25,7 @@ test('Player can attack enemy Gameboard and hit', () => {
   const player = Player();
   const enemy = Player();
   const enemyBoard = enemy.getBoard();
-  enemyBoard.placeShip(5, [0, 0], 'horizontal');
+  enemyBoard.placeShip('Carrier', 5, [0, 0], 'horizontal');
   player.attack(enemyBoard, 0, 0);
   expect(enemyBoard.missedAttacks).toEqual([]);
   expect(enemyBoard.ships[0].hits).toEqual([[0, 0]]);
@@ -35,7 +35,7 @@ test('Player can attack enemy Gameboard and sink a ship', () => {
   const player = Player();
   const enemy = Player();
   const enemyBoard = enemy.getBoard();
-  enemyBoard.placeShip(5, [0, 0], 'horizontal');
+  enemyBoard.placeShip('Carrier', 5, [0, 0], 'horizontal');
   player.attack(enemyBoard, 0, 0);
   player.attack(enemyBoard, 1, 0);
   player.attack(enemyBoard, 2, 0);
@@ -48,7 +48,7 @@ test('Player can attack enemy Gameboard and win the game', () => {
   const player = Player();
   const enemy = Player();
   const enemyBoard = enemy.getBoard();
-  enemyBoard.placeShip(5, [0, 0], 'vertical');
+  enemyBoard.placeShip('Carrier', 5, [0, 0], 'vertical');
   player.attack(enemyBoard, 0, 0);
   player.attack(enemyBoard, 0, 1);
   player.attack(enemyBoard, 0, 2);
