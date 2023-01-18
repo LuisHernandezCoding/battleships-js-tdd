@@ -1,19 +1,26 @@
 import './style.css';
-import Icon from './icon.png';
+import {
+  drawGrid,
+  showAction,
+  updatePlacingShip,
+  createAlert,
+  startPlacing,
+} from './lib/domManager.js';
+import game from './lib/game.js';
 
-function component() {
-  const element = document.createElement('div');
+const gameInstance = game();
 
-  element.innerHTML = 'Hello webpack';
-  element.classList.add('hello');
+// draw the boards
+drawGrid();
+drawGrid('enemy');
 
-  // Add the image to our existing div.
-  const myIcon = new Image();
-  myIcon.src = Icon;
+// Show action to the player
+showAction('player', 'Place your ships');
+showAction('enemy', 'Waiting For Ships', 'alert');
 
-  element.appendChild(myIcon);
+updatePlacingShip('Carrier');
 
-  return element;
-}
+// Show the alert
+createAlert('success', 'Game started, place your ships (Press R to rotate)');
 
-document.body.appendChild(component());
+startPlacing(gameInstance, 'horizontal', 'Carrier');
