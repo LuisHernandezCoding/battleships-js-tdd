@@ -1,4 +1,4 @@
-const shipFactory = require('./shipFactory.js');
+import shipFactory from './shipFactory.js';
 
 // function to get the coordinates of a ship
 function getShipCoordinates(coordinates, length, orientation) {
@@ -26,6 +26,14 @@ function getHitShip(coordinates, ships) {
     });
   });
   return shipHit;
+}
+
+function validateName(name) {
+  // Carrier, Battleship, Cruiser, Submarine, Destroyer, Patroller
+  if (name !== 'Carrier' && name !== 'Battleship' && name !== 'Cruiser'
+  && name !== 'Submarine' && name !== 'Destroyer' && name !== 'Patroller') {
+    throw new Error('Ship name must be Carrier, Battleship, Cruiser, Submarine, Destroyer or Patroller');
+  }
 }
 
 function validateShipLength(length) {
@@ -70,19 +78,29 @@ function validateOverlap(coordinates, length, orientation, ships) {
   });
 }
 
+export function boardValidation(name, length, coordinates, orientation, ships) {
+  validateName(name);
+  validateShipLength(length);
+  validateOrientation(orientation);
+  validateCoordinates(coordinates);
+  validateOverlap(coordinates, length, orientation, ships);
+  return true;
+}
+
 // gameboard factory function
-function gameboardFactory() {
+export function gameboardFactory() {
   const gameboard = {
     ships: [],
     missedAttacks: [],
-    placeShip(length, coordinates, orientation) {
-      validateShipLength(length);
-      validateOrientation(orientation);
-      validateCoordinates(coordinates);
-      validateOverlap(coordinates, length, orientation, this.ships);
+    placeShip(name, length, coordinates, orientation) {
+      // validate ship
+      if (boardValidation(name, length, coordinates, orientation, this.ships) === false) {
+        return;
+      }
 
       // create ship
       const ship = shipFactory(length);
+      ship.name = name;
       ship.coordinates = getShipCoordinates(coordinates, length, orientation);
 
       // check if ship is off the board
@@ -110,5 +128,3 @@ function gameboardFactory() {
   };
   return gameboard;
 }
-
-module.exports = gameboardFactory;
