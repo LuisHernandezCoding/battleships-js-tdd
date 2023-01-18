@@ -1,6 +1,40 @@
-.hello {
-  color: red;
-  background: url('./icon.png');
-  width: 100px;
-  height: 100px;
+.board {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+}
+
+.cell {
+  background-size: contain;
+  background-color: rgb(255 255 255 / 63%);
+  border: 1px solid rgb(255, 255, 255);
+  height: 0;
+  padding-bottom: 100%;
+  width: 100%;
+}
+
+.cell.has-background-danger {
+  background-color: rgba(255, 0, 0, 0.63) !important;
+}
+
+.cell.has-background-success {
+  background-color: rgba(30, 255, 0, 0.63) !important;
+}
+
+.cell:hover {
+  background-color: rgb(215, 215, 215, 0.5);
+  cursor: pointer;
+}
+
+.is-fullheight {
+  min-height: 100vh;
+}
+
+.tittle-tag > span {
+  font-family: monospace;
+  width: 135px;
+}
+
+.has-ocean {
+  background-image: url(./images/ocean-big.jpg);
 }
